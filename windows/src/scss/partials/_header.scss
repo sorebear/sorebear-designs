@@ -1,0 +1,17 @@
+header {
+  .header-container {
+    margin: 2rem 0 0 2rem;
+    padding: 2rem;
+
+    h1.header-title {
+      margin: 0;
+
+      a {
+        color: $tertiary-color;
+        text-decoration: none;
+        text-shadow: none;
+        background-image: none;
+      }
+    }
+  }
+}

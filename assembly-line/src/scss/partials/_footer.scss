@@ -1,0 +1,26 @@
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: skyblue;
+  height: 200px;
+
+  .converyor-container {
+
+
+    .wheels-container {
+      display: flex;
+      flex-wrap: wrap;
+      overflow: hidden;
+      justify-content: space-between;
+
+      .wheel {
+        background-color: #333;
+        height: 25px;
+        width: 25px;
+        border-radius: 50%;
+      }
+    }
+  }
+}

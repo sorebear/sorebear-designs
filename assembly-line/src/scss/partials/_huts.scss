@@ -1,0 +1,97 @@
+@mixin horizontalSlatShading($color) {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 15%;
+    background-image: linear-gradient(rgba(darken($color, 15%), 100%), rgba(darken($color, 15%), 0%));
+  }
+}
+
+@mixin verticalSlatShading($color) {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 15%;
+    background-image: linear-gradient(to right, rgba(darken($color, 15%), 100%), rgba(darken($color, 15%), 0%));
+  }
+}
+
+@mixin hut($building-color, $door-color) {
+  width: 25vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+
+  .hut-roof {
+    height: 25%;
+
+    .roof-border {
+      height: 100%;
+      width: 100%;
+
+      .hut-roof-slat {
+        background-color: $building-color;
+        width: 100%;
+        @include horizontalSlatShading($building-color);
+      }
+    }
+  }
+
+  .hut-body {
+    height: 75%;
+    position: relative;
+
+    .hut-body-slat {
+      background-color: $building-color;
+      width: 100%;
+      position: relative;
+      @include horizontalSlatShading($building-color);
+    }
+
+    .door {
+      position: absolute;
+      height: 100%;
+      width: 65%;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%);
+
+      .door-border {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        background-color: $door-color;
+  
+        .hut-door-slat {
+          background-color: $door-color;
+          height: 100%;
+          @include verticalSlatShading($door-color);
+        }
+      }
+  
+    }
+  }
+
+}
+
+.hut-container {
+  display: flex;
+  .hut-blue {
+    @include hut(blue, yellow);
+  }
+  
+  .hut-yellow {
+    @include hut(yellow, blue);
+  }
+}
