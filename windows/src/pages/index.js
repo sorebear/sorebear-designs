@@ -1,34 +1,66 @@
 import React from 'react';
 import Panel from '../components/Panel';
-
-import pinkMountain from '../img/pink-mountain.jpg';
-import pinkBridge from '../img/pink-bridge.jpg';
-import pinkTulips from '../img/pink-tulips.jpg';
-
-const imageArr = [pinkMountain, pinkBridge, pinkTulips]
+import Work from '../components/Work';
+import About from '../components/About';
+import Contact from '../components/Contact';
+import IScroll from '../vendor/iscroll.min.js';
 
 class IndexPage extends React.Component {
   constructor(props) {
     super(props);
+    this.maskScroll = null;
     this.panelCount = this.props.data.site.siteMetadata.pages.length;
     this.incrementActivePanel = this.incrementActivePanel.bind(this);
+    this.toggleExpandPanel = this.toggleExpandPanel.bind(this);
+    this.maskTransitionEnd = this.maskTransitionEnd.bind(this);
     this.state = {
       expandActivePanel: false,
+      collapseActivePanel: false,
+      nextPanelRequested: false,
       activePanel: 0,
     }
   }
 
+  toggleExpandPanel() {
+    this.setState({
+      collapseActivePanel: this.state.expandActivePanel,
+      expandActivePanel: !this.state.expandActivePanel
+    });
+  }
+
+  componentDidMount() {
+    this.createMaskScroll();
+  }
+
+  createMaskScroll() {
+    new IScroll('.panels-mask .description-container-copy', { mouseWheel: true });
+  }
+
   incrementActivePanel() {
-    let pauseDuration = 0;
     if (this.state.expandActivePanel) {
-      this.setState({ expandActivePanel: false });
-      pauseDuration = 1100;
-    }
-    setTimeout(() => {
-      this.setState({
-        activePanel: this.state.activePanel + 1 === this.panelCount ? 0 : this.state.activePanel + 1
+      this.setState({ 
+        expandActivePanel: false,
+        collapseActivePanel: true,
+        nextPanelRequested: true
       });
-    }, pauseDuration);
+    } else {
+      this.setState({
+        activePanel: this.state.activePanel + 1 === this.panelCount ? 0 : this.state.activePanel + 1,
+      });
+      setTimeout(() => this.createMaskScroll(), 10);
+    }
+  }
+
+  renderSectionContent(layer) {
+    const { siteMetadata } = this.props.data.site;
+    switch(siteMetadata.pages[this.state.activePanel]) {
+      case 'Work':
+        return <Work layer={layer} />
+      case 'About':
+        return <About layer={layer} />
+      case 'Contact':
+        return <Contact layer={layer} />
+    }
   }
 
   renderPanels() {
@@ -36,15 +68,14 @@ class IndexPage extends React.Component {
       <Panel
         key={index}
         title={page}
-        className={this.state.expandActivePanel ? 'expand' : ''}
+        className={this.state.expandActivePanel ? 'expand' : this.state.collapseActivePanel ? 'collapse' : ''}
         activePanel={this.state.activePanel}
         panelCount={this.panelCount}
         index={index}
       >
-        <img src={imageArr[index]} className="bg-image" />
         <button
           className="expand-panel-button"
-          onClick={() => this.setState({ expandActivePanel: !this.state.expandActivePanel })}
+          onClick={this.toggleExpandPanel}
         >
           <i className="fas fa-plus"></i>
         </button>
@@ -52,31 +83,38 @@ class IndexPage extends React.Component {
     ));
   }
 
+  maskTransitionEnd(e) {
+    if (!this.state.expandActivePanel) {
+      this.setState({ collapseActivePanel: false });
+      if (this.state.nextPanelRequested) {
+        this.setState({ nextPanelRequested: false });
+        this.incrementActivePanel();
+      }
+    }
+  }
+
   render() {
     return (
       <div className="main-container">
-        <div className="description-container">
-          <h2>Descripton</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Malesuada proin libero nunc consequat interdum varius sit amet. Aliquam vestibulum morbi blandit cursus risus at ultrices mi. Orci porta non pulvinar neque laoreet suspendisse. Ultricies mi quis hendrerit dolor magna eget est lorem ipsum. Gravida in fermentum et sollicitudin. Nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est. Libero id faucibus nisl tincidunt eget nullam non nisi. Mauris sit amet massa vitae tortor condimentum. Pellentesque diam volutpat commodo sed egestas egestas. Non quam lacus suspendisse faucibus interdum posuere lorem. Nisi scelerisque eu ultrices vitae auctor eu augue ut lectus.
-          </p>
+        <div className={`description-container ${this.state.expandActivePanel ? 'expand' : ''}`}>
+          { this.renderSectionContent('background') }
         </div>
         <div className="panels-container">
           { this.renderPanels() }
           <button className="next-panel-btn" onClick={this.incrementActivePanel}>
             <i className="fas fa-chevron-right"></i>
           </button>
-          <div className={`panels-mask${this.state.expandActivePanel ? ' expand' : ''}`}>
+          <div
+            onAnimationEnd={this.maskTransitionEnd}
+            className={`panels-mask ${this.state.expandActivePanel ? 'expand' : this.state.collapseActivePanel ? 'collapse' : ''}`}
+          >
             <div className="description-container-copy">
-              <h2>Descripton</h2>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Malesuada proin libero nunc consequat interdum varius sit amet. Aliquam vestibulum morbi blandit cursus risus at ultrices mi. Orci porta non pulvinar neque laoreet suspendisse. Ultricies mi quis hendrerit dolor magna eget est lorem ipsum. Gravida in fermentum et sollicitudin. Nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est. Libero id faucibus nisl tincidunt eget nullam non nisi. Mauris sit amet massa vitae tortor condimentum. Pellentesque diam volutpat commodo sed egestas egestas. Non quam lacus suspendisse faucibus interdum posuere lorem. Nisi scelerisque eu ultrices vitae auctor eu augue ut lectus.
-              </p>
+              { this.renderSectionContent('mask')}
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 

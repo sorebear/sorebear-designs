@@ -1,0 +1,35 @@
+@keyframes toActive {
+  0% { right: -20vw; }
+  100% { right: 20vw; }
+}
+
+@keyframes toNext {
+  0% { right: -60vw; }
+  100% { right: -20vw; }
+}
+
+@keyframes toPrevious {
+  0% { right: 20vw; }  
+  99% { right: 60vw; opacity: 1;}
+  100% { right: 60vw; opacity: 0; }
+}
+
+@keyframes removeMask {
+  0% { width: 40vw; }
+  100% { width: 0; }
+}
+
+@keyframes resetMask {
+  0% { width: 0; }
+  100% { width: 40vw; }
+}
+
+@keyframes offsetRight {
+  0% { transform: translateX(0vw); }
+  100% { transform: translateX(20vw); }
+}
+
+@keyframes resetRight {
+  0% { transform: translateX(20vw); }
+  100% { transform: translateX(0vw); }
+}

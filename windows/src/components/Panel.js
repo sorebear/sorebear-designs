@@ -14,5 +14,5 @@ export default ({ children, title, index, activePanel, panelCount, className, bg
         <h2>{ title }</h2>
       </div>
     </div>
-  )
+  );
 };
